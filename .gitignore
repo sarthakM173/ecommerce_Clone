@@ -14,4 +14,4 @@ __pycache__/
 .vscode/
 
 # Other files to exclude (if necessary)
-
+data.sql
