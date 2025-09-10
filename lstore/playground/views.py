@@ -1,10 +1,15 @@
 from django.shortcuts import render
-from storeE.models import Product,OrderItem,Order,Customer
+from storeE.models import Product,OrderItem,Order,Customer,Collection
 from django.http import HttpResponse
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q,F,Avg,Value,Func
+from django.db.models import Q,F,Avg,Value,Func,ExpressionWrapper,DecimalField
 from django.db.models.functions import Concat
 from django.db.models.aggregates import Count,Max,Min,Avg,Sum
+#from decimal import Decimal
+from django.contrib.contenttypes.models import ContentType
+from tags.models import TaggedItem
+from django.db import transaction
+from django.db import connection
 
 
 
@@ -98,11 +103,77 @@ def say_hello(request):
                      F('last_name'),function='CONCAT')
    )'''
    #Way 2
+   '''
    queryset=Customer.objects.annotate(
       full_name=Concat('first_name',Value(' '),'last_name')
-   )
+   )'''
+   
+   #group_by
+   #queryset=Customer.objects.annotate(orders_count=Count('order'))
 
+   #expressionWrapper
+   #discounted_price=ExpressionWrapper( F('unit_price') * 0.8,output_field=DecimalField(max_digits=10,decimal_places=2))
+   #queryset=Product.objects.annotate(discounted_price=discounted_price)      
 
+   #Generic relationship
+   '''
+   content_type_id=ContentType.objects.get_for_model(Product)
+   queryset=TaggedItem\
+      .objects.select_related('tag')\
+      .filter(
+         content_type=content_type_id,
+         object_id=1)'''
+   ##customer manager
+   #queryset=TaggedItem.objects.get_tags_for(Product,1)
 
-   return render(request,'hello.html',{'name':'Humans','products': list(queryset)})
+   #raw query
+   #queryset=Product.objects.raw('SELECT id,title FROM sroreE_collection')
+   ##without using model mapper
+   '''
+   with connection.cursor() as cursor:
+      cursor.execute('SELECT* FROM')
+      cursor.callproc('')#for storage procedure
+      '''
+  
+   
+   #return render(request,'hello.html',{'name':'Humans','products': list(queryset)})
+
+   #===================================================DDL query
+   #way1 INSERT
+   '''
+   collection=Collection()
+   collection.title='Video Games'
+   collection.featured_product=Product(pk=1)#pk1 should exist
+   collection.save()'''
+   #way2
+   #collection=Collection.objects.create(title='a',featured_product=1)#if names of the fields(title,fea..) are changed it wont update dynamically
+   #collection.id
+
+   #update
+   #collection=Collection(pk=11)#will make other column vals empty
+   #collection=Collection.objects.get(pk=11)#this will call the oject to memory then update it which is bit more expensive
+   #collection.featured_product=None
+   #collection.save()
+
+   #Collection.objects.filter(pk=11).update(featured_product=None)#faster but not dynamic
+
+   #DELETE
+   #collection=Collection(pk=11)
+   #collection.delete()
+
+   #Collection.objects.filter(id__gt=11).delete()
+   '''
+   with transaction.atomic():
+      order=Order()
+      order.customer_id=1
+      order.save()
+
+      item=OrderItem()
+      item.order=order
+      item.product_id=1
+      item.quantity=1
+      item.unit_price=10
+      item.save()'''
+
+   return render(request,'hello.html',{'name':'Humans'})
    
