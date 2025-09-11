@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+    'django.contrib.sessions',
     'django.contrib.contenttypes',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'storeE',
     'tags',
+    'store_custom',
     'likes'
 
 ]

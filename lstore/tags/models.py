@@ -19,6 +19,8 @@ class TaggedItemManager(models.Manager):
 class Tag(models.Model):
     name=models.CharField(max_length=255)
 
+    def __str__(self):
+         return self.name
 
 class TaggedItem(models.Model):
     objects=TaggedItemManager()
@@ -28,5 +30,9 @@ class TaggedItem(models.Model):
     #ID
     content_type=models.ForeignKey(ContentType,on_delete=models.CASCADE)
     object_id=models.PositiveIntegerField()
-    content_object=GenericForeignKey
+    #content_object=GenericForeignKey
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    #def __str__(self):
+     #   return f"{self.tag} -> {self.content_object}"
 

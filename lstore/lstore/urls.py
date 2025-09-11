@@ -16,11 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
 #new conf
-from django.urls import include
 from django.urls import include, path
 from debug_toolbar.toolbar import debug_toolbar_urls
+
+#admin.site.site_header = 'LStore Admin'
+
+admin.site.site_header = 'LStore Admin'
+
+admin.site.index_title='Admin'
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
