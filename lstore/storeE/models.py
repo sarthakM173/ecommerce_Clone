@@ -62,12 +62,9 @@ class Customer(models.Model):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name} {self.phone}"
-    
+             
     class Meta:
-        ordering=['first_name','last_name']
-
-    
-    class Meta:
+        
         db_table = 'store_customers'
         indexes = [
             models.Index(fields=['last_name','first_name'])
